@@ -9,7 +9,7 @@ import (
 
 // Env takes JSON in encoded by Base64 (without padding) and allows read values
 // from it.
-type Env struct{ root map[string]json.RawMessage }
+type Env struct{ root interface{} }
 
 // NewEnv creates new instance of Env.
 func NewEnv(base64Source string) (Env, error) {
@@ -28,6 +28,15 @@ func NewEnv(base64Source string) (Env, error) {
 	return result, nil
 }
 
+// Dump returns string with content encoded by Base64 (without padding).
+func (env Env) Dump() (string, error) {
+	source, err := json.Marshal(env.root)
+	if err != nil {
+		return "", fmt.Errorf(`failed to save in JSON: "%w"`, err)
+	}
+	return base64.RawStdEncoding.EncodeToString(source), nil
+}
+
 // Read reads string value by path.
 func (env Env) Read(fullPath string) (string, error) {
 	path := strings.Split(fullPath, "/")
@@ -37,10 +46,14 @@ func (env Env) Read(fullPath string) (string, error) {
 	}
 	pathLen -= 1
 
+	node, isNode := env.root.(map[string]interface{})
+	if !isNode {
+		return "", fmt.Errorf(`root is not node`)
+	}
+
 	completedPath := make([]string, 0, pathLen)
-	node := env.root
 	for i := 0; i < pathLen; i++ {
-		key := path[i]
+		key := strings.TrimSpace(path[i])
 		if len(key) == 0 {
 			continue
 		}
@@ -50,25 +63,60 @@ func (env Env) Read(fullPath string) (string, error) {
 				key, strings.Join(completedPath, "/"))
 		}
 		completedPath = append(completedPath, key)
-		node = nil
-		if err := json.Unmarshal(child, &node); err != nil {
-			return "", fmt.Errorf(`failed to parse node %q: "%w"`,
-				strings.Join(completedPath, "/"), err)
+		var isNode bool
+		node, isNode = child.(map[string]interface{})
+		if !isNode {
+			return "", fmt.Errorf(`failed to path %q is not node`,
+				strings.Join(completedPath, "/"))
 		}
 	}
 
-	key := path[pathLen]
+	key := strings.TrimSpace(path[pathLen])
 	val, has := node[key]
 	if !has {
 		return "", fmt.Errorf(`path %q doesn't have value key %q`,
 			strings.Join(completedPath, "/"), key)
 	}
 
-	var result string
-	if err := json.Unmarshal(val, &result); err != nil {
-		return "", fmt.Errorf(`failed to parse value key %q with path %q: "%w"`,
-			key, strings.Join(completedPath, "/"), err)
+	result, isString := val.(string)
+	if !isString {
+		return "", fmt.Errorf(`value key %q with path %q is not string`,
+			key, strings.Join(completedPath, "/"))
 	}
 
 	return result, nil
+}
+
+// Set sets value by path.
+func (env *Env) Set(fullPath, value string) error {
+	path := strings.Split(fullPath, "/")
+	pathLen := len(path)
+	if pathLen == 0 {
+		return fmt.Errorf(`path "%s" is empty`, fullPath)
+	}
+	pathLen -= 1
+
+	node, isNode := env.root.(map[string]interface{})
+	if !isNode {
+		return fmt.Errorf(`root is not node`)
+	}
+
+	for i := 0; i < pathLen; i++ {
+		key := strings.TrimSpace(path[i])
+		if len(key) == 0 {
+			continue
+		}
+		if child, has := node[key]; has {
+			if childNode, isNode := child.(map[string]interface{}); isNode {
+				node = childNode
+				continue
+			}
+		}
+		node[key] = map[string]interface{}{}
+		node = node[key].(map[string]interface{})
+	}
+
+	node[strings.TrimSpace(path[pathLen])] = value
+
+	return nil
 }
