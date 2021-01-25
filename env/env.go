@@ -28,6 +28,15 @@ func NewEnv(base64Source string) (Env, error) {
 	return result, nil
 }
 
+// Export exports source as JSON.
+func (env Env) Export() (string, error) {
+	result, err := json.Marshal(env.root)
+	if err != nil {
+		return "", err
+	}
+	return string(result), nil
+}
+
 // Dump returns string with content encoded by Base64 (without padding).
 func (env Env) Dump() (string, error) {
 	source, err := json.Marshal(env.root)

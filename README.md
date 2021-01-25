@@ -1,4 +1,4 @@
-[![Go Report Card](https://goreportcard.com/badge/github.com/palchukovsky/protoc-install)](https://goreportcard.com/report/github.com/palchukovsky/json-env)
+[![Go Report Card](https://goreportcard.com/badge/github.com/palchukovsky/json-env)](https://goreportcard.com/report/github.com/palchukovsky/json-env)
 
 # json-env
 A tool to read and modify Base64 encoded JSON to use configurations JSON-files for CI/CD environments.
@@ -13,4 +13,8 @@ A tool to read and modify Base64 encoded JSON to use configurations JSON-files f
     json-env -source eyJmIjoidmFsMiIsIngiOnsieSI6eyJ6IjoiMSAyIDMifX0sInoiOiJ2YWxYIn0 -read x/y/z
     json-env -source eyJmIjoidmFsMiIsIngiOnsieSI6eyJ6IjoiMSAyIDMifX0sInoiOiJ2YWxYIn0 -read z
     json-env -source eyJmIjoidmFsMiIsIngiOnsieSI6eyJ6IjoiMSAyIDMifX0sInoiOiJ2YWxYIn0 -read zz -default "is not existent"
+```
+### Export source
+```shell
+    json-env -source eyJmIjoidmFsMiIsIngiOnsieSI6eyJ6IjoiMSAyIDMifX0sInoiOiJ2YWxYIn0 -export
 ```

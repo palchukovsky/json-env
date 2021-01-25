@@ -18,6 +18,8 @@ var (
 		`default result for value reading, ex.: "default value"`)
 	write = flag.String("write", "",
 		`values to write, ex.: root/key1=val1 root/key2=val2`)
+	export = flag.Bool("export", false,
+		`export source, could be used with writing`)
 )
 
 func main() {
@@ -35,6 +37,9 @@ func main() {
 	}
 
 	if *read != "" {
+		if *export {
+			log.Fatalf(`Cannot export with reading.`)
+		}
 		result, err := env.Read(*read)
 		if err != nil {
 			log.Fatalf(`Failed to read path %q: "%v".`, *read, err)
@@ -62,9 +67,20 @@ func main() {
 				log.Fatalf(`Failed to set %q = %q: "%v".`, v[0], v[1], err)
 			}
 		}
-		result, err := env.Dump()
+		if !*export {
+			result, err := env.Dump()
+			if err != nil {
+				log.Fatalf(`Failed to dump source: "%v".`, err)
+			}
+			fmt.Print(result)
+			return
+		}
+	}
+
+	if *export {
+		result, err := env.Export()
 		if err != nil {
-			log.Fatalf(`Failed to dump value: "%v".`, err)
+			log.Fatalf(`Failed to export source: "%v".`, err)
 		}
 		fmt.Print(result)
 		return

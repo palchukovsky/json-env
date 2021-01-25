@@ -109,4 +109,9 @@ func Test_Env(test *testing.T) {
 	assert.NoError(err)
 	assert.Equal(`eyJmIjoidmFsMi4yIiwiZjIiOiJ2YWwyLjMiLCJ4Ijp7InkiOnsieiI6InZhbDEiLCJ6MiI6InZhbDEuMiJ9LCJ5MiI6eyJ6IjoidmFsMS4zIn19fQ`,
 		dump)
+
+	dump, err = env.Export()
+	assert.NoError(err)
+	assert.Equal(`{"f":"val2.2","f2":"val2.3","x":{"y":{"z":"val1","z2":"val1.2"},"y2":{"z":"val1.3"}}}`,
+		dump)
 }
