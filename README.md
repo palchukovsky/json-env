@@ -12,4 +12,5 @@ A tool to read and modify Base64 encoded JSON to use configurations JSON-files f
 ```shell
     json-env -source eyJmIjoidmFsMiIsIngiOnsieSI6eyJ6IjoiMSAyIDMifX0sInoiOiJ2YWxYIn0 -read x/y/z
     json-env -source eyJmIjoidmFsMiIsIngiOnsieSI6eyJ6IjoiMSAyIDMifX0sInoiOiJ2YWxYIn0 -read z
+    json-env -source eyJmIjoidmFsMiIsIngiOnsieSI6eyJ6IjoiMSAyIDMifX0sInoiOiJ2YWxYIn0 -read zz -default "is not existent"
 ```

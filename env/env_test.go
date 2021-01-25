@@ -31,20 +31,25 @@ func Test_Env(test *testing.T) {
 
 	val, err := env.Read("x/y/z")
 	assert.NoError(err)
-	assert.Equal("val1", val)
+	assert.NotNil(val)
+	assert.Equal("val1", *val)
 
 	val, err = env.Read("f")
 	assert.NoError(err)
-	assert.Equal("val2", val)
+	assert.NotNil(val)
+	assert.Equal("val2", *val)
 
-	_, err = env.Read("y")
-	assert.EqualError(err, `path "" doesn't have value key "y"`)
+	val, err = env.Read("y")
+	assert.NoError(err)
+	assert.Nil(val)
 
-	_, err = env.Read("y/z/x")
-	assert.EqualError(err, `path node "y" is not existing in ""`)
+	val, err = env.Read("y/z/x")
+	assert.NoError(err)
+	assert.Nil(val)
 
-	_, err = env.Read("x/y/v")
-	assert.EqualError(err, `path "x/y" doesn't have value key "v"`)
+	val, err = env.Read("x/y/v")
+	assert.NoError(err)
+	assert.Nil(val)
 
 	//////////////////////////////////////////////////////////////////////////////
 
@@ -61,19 +66,27 @@ func Test_Env(test *testing.T) {
 
 	val, err = env.Read("x/y/z2")
 	assert.NoError(err)
-	assert.Equal("val1.2", val)
+	assert.NotNil(val)
+	assert.Equal("val1.2", *val)
 
 	val, err = env.Read("x/y2/z")
 	assert.NoError(err)
-	assert.Equal("val1.3", val)
+	assert.NotNil(val)
+	assert.Equal("val1.3", *val)
 
 	val, err = env.Read("f")
 	assert.NoError(err)
-	assert.Equal("val2.2", val)
+	assert.NotNil(val)
+	assert.Equal("val2.2", *val)
 
 	val, err = env.Read("f2")
 	assert.NoError(err)
-	assert.Equal("val2.3", val)
+	assert.NotNil(val)
+	assert.Equal("val2.3", *val)
+
+	val, err = env.Read("x/y/v")
+	assert.NoError(err)
+	assert.Nil(val)
 
 	//////////////////////////////////////////////////////////////////////////////
 

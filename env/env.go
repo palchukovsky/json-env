@@ -38,17 +38,17 @@ func (env Env) Dump() (string, error) {
 }
 
 // Read reads string value by path.
-func (env Env) Read(fullPath string) (string, error) {
+func (env Env) Read(fullPath string) (*string, error) {
 	path := strings.Split(fullPath, "/")
 	pathLen := len(path)
 	if pathLen == 0 {
-		return "", fmt.Errorf(`path "%s" is empty`, fullPath)
+		return nil, fmt.Errorf(`path "%s" is empty`, fullPath)
 	}
 	pathLen -= 1
 
 	node, isNode := env.root.(map[string]interface{})
 	if !isNode {
-		return "", fmt.Errorf(`root is not node`)
+		return nil, fmt.Errorf(`root is not node`)
 	}
 
 	completedPath := make([]string, 0, pathLen)
@@ -59,14 +59,13 @@ func (env Env) Read(fullPath string) (string, error) {
 		}
 		child, has := node[key]
 		if !has {
-			return "", fmt.Errorf(`path node %q is not existing in %q`,
-				key, strings.Join(completedPath, "/"))
+			return nil, nil
 		}
 		completedPath = append(completedPath, key)
 		var isNode bool
 		node, isNode = child.(map[string]interface{})
 		if !isNode {
-			return "", fmt.Errorf(`failed to path %q is not node`,
+			return nil, fmt.Errorf(`failed to path %q is not node`,
 				strings.Join(completedPath, "/"))
 		}
 	}
@@ -74,17 +73,16 @@ func (env Env) Read(fullPath string) (string, error) {
 	key := strings.TrimSpace(path[pathLen])
 	val, has := node[key]
 	if !has {
-		return "", fmt.Errorf(`path %q doesn't have value key %q`,
-			strings.Join(completedPath, "/"), key)
+		return nil, nil
 	}
 
 	result, isString := val.(string)
 	if !isString {
-		return "", fmt.Errorf(`value key %q with path %q is not string`,
+		return nil, fmt.Errorf(`value key %q with path %q is not string`,
 			key, strings.Join(completedPath, "/"))
 	}
 
-	return result, nil
+	return &result, nil
 }
 
 // Set sets value by path.

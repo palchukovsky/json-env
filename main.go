@@ -14,6 +14,8 @@ var (
 		`source, Base64 (without paddings) coded JSON structure`)
 	read = flag.String("read", "",
 		`path to value to read, ex.: root/branch/key`)
+	defaultValue = flag.String("default", "",
+		`default result for value reading, ex.: "default value"`)
 	write = flag.String("write", "",
 		`values to write, ex.: root/key1=val1 root/key2=val2`)
 )
@@ -37,7 +39,13 @@ func main() {
 		if err != nil {
 			log.Fatalf(`Failed to read path %q: "%v".`, *read, err)
 		}
-		fmt.Print(result)
+		if result == nil {
+			if *defaultValue == "" {
+				log.Fatalf(`Path %q is not existent.`, *read)
+			}
+			result = defaultValue
+		}
+		fmt.Print(*result)
 		return
 	}
 
