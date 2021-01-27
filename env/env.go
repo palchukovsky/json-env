@@ -15,8 +15,7 @@ type Env struct{ root interface{} }
 func NewEnv(base64Source string) (Env, error) {
 	result := Env{}
 
-	sourceJson, err := base64.RawStdEncoding.DecodeString(
-		base64Source)
+	sourceJson, err := base64.RawStdEncoding.DecodeString(base64Source)
 	if err != nil {
 		return result, fmt.Errorf(`failed to decode Base64: "%w"`, err)
 	}

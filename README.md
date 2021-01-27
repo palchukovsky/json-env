@@ -18,3 +18,7 @@ A tool to read and modify Base64 encoded JSON to use configurations JSON-files f
 ```shell
     json-env -source eyJmIjoidmFsMiIsIngiOnsieSI6eyJ6IjoiMSAyIDMifX0sInoiOiJ2YWxYIn0 -export
 ```
+### Encode JSON-file to Base64
+```shell
+    json-env -encode_file /path/config.json
+```
