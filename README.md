@@ -1,8 +1,11 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/palchukovsky/json-env)](https://goreportcard.com/report/github.com/palchukovsky/json-env)
-
 # json-env
 A tool to read and modify Base64 encoded JSON to use configurations JSON-files for CI/CD environments.
-
+## To install
+[Go](https://golang.org/dl/) has to be installed.
+```shell
+    go get github.com/palchukovsky/json-env
+```
 ## Examples
 ### Set value
 ```shell
