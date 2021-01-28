@@ -44,8 +44,8 @@ AWS_AUTH_GATEWAY_ID := $(shell json-env -source ${CONFIG} -read service/aws/gate
     
 define create-config-file
     -mkdir -p ${1}
-    @echo "json-env -source CONFIG -export > ${1}config.json"
-    @json-env -source ${CONFIG} -export > "${1}config.json"
+    @echo "json-env -source CONFIG -export > ${1}lambda_config.json"
+    @json-env -source ${CONFIG} -export > "${1}lambda_config.json"
 endef
 ```
 ``` go
